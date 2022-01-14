@@ -20,7 +20,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes(['verify' => true]);
+Route::group([
+    'middleware' => 'web',
+    'prefix' => 'auth'
+], function ($router) {
+
+    Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
+    Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+    Route::post('refresh', [\App\Http\Controllers\AuthController::class, 'refresh']);
+    Route::get('me', [\App\Http\Controllers\AuthController::class, 'me']);
+
+});
+
 // Private Routes
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
